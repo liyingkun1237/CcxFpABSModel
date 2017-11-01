@@ -20,7 +20,7 @@ class base_addr(object):
 
         idno_path = os.path.join(file_path, 'exData', 'idno_dict.pkl')
         mobile_path = os.path.join(file_path, 'exData', 'mobile_addr_dict.pkl')
-        bank_path = os.path.join(file_path, 'exData', 'bank_addr_dict_all.pkl')
+        bank_path = os.path.join(file_path, 'exData', 'bankAddr_dict_One.pkl')
         varall_path = os.path.join(file_path, 'exData', 'varall.pkl')
 
         with open(idno_path, 'rb') as f:
@@ -66,12 +66,8 @@ class base_addr(object):
             idno_prov=lambda x: x.id_no.apply(self.get_idno_prov),
             idno_city=lambda x: x.id_no.apply(self.get_idno_city)
         )
-        print('scfvc', base_addr_1.drop_duplicates().shape)
 
-        base_addr = pd.merge(base_addr_1, self.bankcard_dict, how='left')
-
-        print('sfeffe', base_addr.drop_duplicates().shape)
-
+        base_addr = pd.merge(base_addr_1, self.bankcard_dict, how='left', on=['lend_request_id', 'card_no_pri'])
         base_addr = base_addr.assign(
             # 数据清洗
             bank=lambda x: x.bank.apply(self.f_bank_clean),

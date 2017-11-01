@@ -26,30 +26,30 @@ class Fp_ccx_dataprocess(object):
     def senior_data(data):
         fr_data = data[data['是否法人'] == 1]  # 法人
         nfr_data = data[data['是否法人'] == 2]  # 非法人
-        fr_info = fr_data.groupby('LEND_REQUEST_ID')['注册资本'].max().reset_index().rename(columns={'注册资本': 'FR_REG'})
-        nfr_info = nfr_data.groupby('LEND_REQUEST_ID')['注册资本'].max().reset_index().rename(columns={'注册资本': 'NFR_REG'})
-        df = pd.merge(fr_info, nfr_info, on='LEND_REQUEST_ID', how='outer')
+        fr_info = fr_data.groupby('lend_request_id')['注册资本'].max().reset_index().rename(columns={'注册资本': 'FR_REG'})
+        nfr_info = nfr_data.groupby('lend_request_id')['注册资本'].max().reset_index().rename(columns={'注册资本': 'NFR_REG'})
+        df = pd.merge(fr_info, nfr_info, on='lend_request_id', how='outer')
         return df
 
     # 股东信息
     @staticmethod
     def shareholder_data(data):
         def merge_reduce(x, y):
-            return pd.merge(x, y, on='LEND_REQUEST_ID', how='left')
+            return pd.merge(x, y, on='lend_request_id', how='left')
 
         #        try:
         #            data.loc[data['投资人类型']=='!','投资人类型']=-1
         #        except Exception:
         #            print('投资人类型字段无感叹号')
         #        data['投资人类型']=data['投资人类型'].astype(np.float64)
-        credit_code = data.groupby('LEND_REQUEST_ID')[['统一信用代码']].agg('count').reset_index().rename(
+        credit_code = data.groupby('lend_request_id')[['统一信用代码']].agg('count').reset_index().rename(
             columns={'统一信用代码': 'credit_code_count'})
         #        invest_type=data.groupby('LEND_REQUEST_ID')[['投资人类型']].agg(np.max).reset_index().rename(columns={'投资人类型':'invest_type'})
-        sh_info1 = data.groupby('LEND_REQUEST_ID')['企业名称股东'].count().reset_index().rename(
+        sh_info1 = data.groupby('lend_request_id')['企业名称股东'].count().reset_index().rename(
             columns={'企业名称股东': 'SH_ENT_count'})
-        sh_info2 = data.groupby('LEND_REQUEST_ID')['认缴出资额'].sum().reset_index().rename(
+        sh_info2 = data.groupby('lend_request_id')['认缴出资额'].sum().reset_index().rename(
             columns={'认缴出资额': 'AMT_SUBCONAM'})
-        sh_info3 = data.groupby('LEND_REQUEST_ID')['实缴出资额'].sum().reset_index().rename(
+        sh_info3 = data.groupby('lend_request_id')['实缴出资额'].sum().reset_index().rename(
             columns={'实缴出资额': 'AMT_ACTCONAM'})
         var_list = [credit_code, sh_info1, sh_info2, sh_info3]
         var = reduce(merge_reduce, var_list)
@@ -67,11 +67,11 @@ class Fp_ccx_dataprocess(object):
             else:
                 return 0
 
-        df1 = data1.groupby('LEND_REQUEST_ID')['企业名称'].agg(is_or_no).reset_index().rename(
+        df1 = data1.groupby('lend_request_id')['企业名称'].agg(is_or_no).reset_index().rename(
             columns={'企业名称': 'is_directors_of_high'})
-        df2 = data2.groupby('LEND_REQUEST_ID')['企业名称股东'].agg(is_or_no).reset_index().rename(
+        df2 = data2.groupby('lend_request_id')['企业名称股东'].agg(is_or_no).reset_index().rename(
             columns={'企业名称股东': 'is_directors_of_high'})
-        df = pd.concat([df1, df2], axis=0, ignore_index=True).drop_duplicates('LEND_REQUEST_ID')
+        df = pd.concat([df1, df2], axis=0, ignore_index=True).drop_duplicates('lend_request_id')
         return df
 
     '''
@@ -102,20 +102,20 @@ class Fp_ccx_dataprocess(object):
         data['立案时间失信'] = data['立案时间失信'].replace(
             ['40907', '41623', '41391', '41275', '41302', '41453', '41456', '41040', '41142'], '2015年11月11日')
         data['立案时间失信'] = data['立案时间失信'].apply(Fp_ccx_dataprocess().f_transdate)
-        data['PASSMTH'] = pd.to_datetime(data['PASSMTH'])
-        data = data.loc[data['立案时间失信'] < data['PASSMTH']]
-        df = data.groupby('LEND_REQUEST_ID')['被执行人履行情况'].agg(['count', np.max]).reset_index().rename(
+        data['PassMth'] = pd.to_datetime(data['PassMth'])
+        data = data.loc[data['立案时间失信'] < data['PassMth']]
+        df = data.groupby('lend_request_id')['被执行人履行情况'].agg(['count', np.max]).reset_index().rename(
             columns={'count': 'shixing_times', 'amax': 'shixing_status'})
         return df
 
     # 执行信息（模糊匹配）
     @staticmethod
     def execute_vague_data(data):
-        data.PASSMTH = pd.to_datetime(data.PASSMTH)
+        data.PassMth = pd.to_datetime(data.PassMth)
         data['立案时间'] = pd.to_datetime(data['立案时间'])
-        data = data.loc[data['立案时间'] < data['PASSMTH']]
+        data = data.loc[data['立案时间'] < data['PassMth']]
         data.drop_duplicates(inplace=True)
-        df = data.groupby('LEND_REQUEST_ID')['涉案金额'].agg(['count', np.mean, np.max]).reset_index().rename(
+        df = data.groupby('lend_request_id')['涉案金额'].agg(['count', np.mean, np.max]).reset_index().rename(
             columns={'count': 'zhixing_vague_times', 'mean': 'zhixing_vague_meanAmount',
                      'amax': 'zhixing_vague_maxAmount'})
         return df
@@ -124,10 +124,10 @@ class Fp_ccx_dataprocess(object):
     @staticmethod
     def execute_exact_data(data):
         data.drop_duplicates(inplace=True)
-        data.PASSMTH = pd.to_datetime(data.PASSMTH)
+        data.PassMth = pd.to_datetime(data.PassMth)
         data['立案时间精确'] = data['立案时间精确'].apply(Fp_ccx_dataprocess().f_transdate)
-        data = data.loc[data['立案时间精确'] < data.PASSMTH]
-        df = data.groupby('LEND_REQUEST_ID')['涉案金额精确'].agg(['count', np.mean, np.max]).reset_index().rename(
+        data = data.loc[data['立案时间精确'] < data['PassMth']]
+        df = data.groupby('lend_request_id')['涉案金额精确'].agg(['count', np.mean, np.max]).reset_index().rename(
             columns={'count': 'zhixing_exact_times', 'mean': 'zhixing_exact_meanAmount',
                      'amax': 'zhixing_exact_maxAmount'})
         return df
@@ -135,21 +135,21 @@ class Fp_ccx_dataprocess(object):
     # 逾期催欠
     @staticmethod
     def overdue_cuiqian_data(data):
-        df = data.groupby('LEND_REQUEST_ID')['欠款金额'].agg(['count', np.mean]).reset_index().rename(
+        df = data.groupby('lend_request_id')['欠款金额'].agg(['count', np.mean]).reset_index().rename(
             columns={'count': 'overdue_cuiqian_times', 'mean': 'overdue_cuiqian_meanAmount'})
         return df
 
     # 银行卡逾期
     @staticmethod
     def bank_overdue_data(data):
-        df = data.groupby('LEND_REQUEST_ID')['是否银行卡逾期'].agg('count').reset_index().rename(
+        df = data.groupby('lend_request_id')['是否银行卡逾期'].agg('count').reset_index().rename(
             columns={'是否银行卡逾期': 'bank_overdue_times'})
         return df
 
     # 小贷逾期
     @staticmethod
     def xiaodai_overdue_data(data):
-        df = data.groupby('LEND_REQUEST_ID')['逾期天数'].agg(['count', np.max]).rename(
+        df = data.groupby('lend_request_id')['逾期天数'].agg(['count', np.max]).rename(
             columns={'count': 'xiaodaiOverdue_times', 'amax': 'xiaodaiOver_daymax'}).reset_index()
         return df
 
@@ -165,7 +165,7 @@ class Fp_ccx_dataprocess(object):
                 return 0
 
         data.drop_duplicates(inplace=True)
-        df = data.groupby('LEND_REQUEST_ID')['可能信息泄露'].agg(is_or_no).reset_index().rename(
+        df = data.groupby('lend_request_id')['可能信息泄露'].agg(is_or_no).reset_index().rename(
             columns={'可能信息泄露': 'is_info_leakage'})
         return df
 
@@ -175,10 +175,10 @@ class Fp_ccx_dataprocess(object):
         from datetime import datetime
         now = datetime.now().year
         data['interval_date_guaduation'] = now - data['毕业时间']
-        data.rename(columns={'进件号': 'LEND_REQUEST_ID', '学历': 'educational', '学历类型': 'education_type',
+        data.rename(columns={'学历': 'educational', '学历类型': 'education_type',
                              '毕业结论': 'guaduation_status'}, inplace=True)
         return data[
-            ['LEND_REQUEST_ID', 'educational', 'education_type', 'guaduation_status', 'interval_date_guaduation']]
+            ['lend_request_id', 'educational', 'education_type', 'guaduation_status', 'interval_date_guaduation']]
 
     # 核验信息
     def verf_data_pre(self, data1, data2):
@@ -269,7 +269,6 @@ class Fp_ccx_dataprocess(object):
     def verf_output_data(self, data1, data2):
         df = self.verf_data_pre(data1, data2)
         dfv = self.verf_data(df)
-        dfv.rename(columns={'lend_request_id': 'LEND_REQUEST_ID'}, inplace=True)
         return dfv
 
     # 评分信息
@@ -292,14 +291,14 @@ class Fp_ccx_dataprocess(object):
             {'lend_request_id': 'count', 'RESULT_score': is_score, 'INDUSTRYNAME_score': self.count_notnull})
         df.rename(columns={'lend_request_id': 'score_query_times', 'RESULT_score': 'score_pass',
                            'INDUSTRYNAME_score': 'score_institution_sum'}, inplace=True)
-        df1 = df.reset_index().rename(columns={'lend_request_id': 'LEND_REQUEST_ID'})
+        df1 = df.reset_index()
         return df1
 
     @staticmethod
     def merge_data(data_list):
 
         def merge_reduce(x, y):
-            return pd.merge(x, y, on='LEND_REQUEST_ID', how='left')
+            return pd.merge(x, y, on='lend_request_id', how='left')
 
         from functools import reduce
 
@@ -372,7 +371,7 @@ class Fp_ccx_dataprocess(object):
         fill_dict = {}
         for x in ls:
             fill_dict[x] = 0
-        print(fill_dict)
+        # print(fill_dict)
         var = var.fillna(fill_dict)
         return var
 

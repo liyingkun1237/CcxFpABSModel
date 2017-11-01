@@ -86,7 +86,7 @@ class fp_apply(object):
         fill_dict = {}
         for x in ls:
             fill_dict[x] = 0
-        print(fill_dict)
+        # print(fill_dict)
         var = var.fillna(fill_dict)
         return var
 

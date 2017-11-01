@@ -27,7 +27,10 @@ from CcxFpABSModel.fp_ccx_process import Fp_ccx_dataprocess
 import pandas as pd
 from functools import reduce
 
+from CcxFpABSModel.log import ABS_log
 
+
+@ABS_log('FPABS')
 def f_calMain(fp_data, ccx_Rawdata):
     '''
     计算变量的总函数
