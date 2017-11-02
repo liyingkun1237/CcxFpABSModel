@@ -44,6 +44,7 @@ def f_threadSaveData(fp_data, ccx_Rawdata):
     :param ccx_Rawdata: 三方征信数据 {'数据集':DataFrame}
     :return:
     '''
+    # print(fp_data.is_true_home_city)
     f_SaveDate(fp_data, 'FpABS_RAWData')
     for k in ccx_Rawdata.keys():
         # print('#' * 32, k, ccx_Rawdata[k], )

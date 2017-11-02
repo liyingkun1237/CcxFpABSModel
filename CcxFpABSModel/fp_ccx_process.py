@@ -232,7 +232,7 @@ class Fp_ccx_dataprocess(object):
             return pd.merge(x, y, left_index=True, right_index=True, how='left')
 
         df = data.groupby(['lend_request_id'])['lend_request_id', 'INDUSTRYNAME', 'RESULT', 'result'].agg(
-            {'lend_request_id': 'count', 'INDUSTRYNAME': self.count_notnull, 'RESULT': self.sucess_count,
+            {'RESULT': 'count', 'INDUSTRYNAME': self.count_notnull, 'RESULT': self.sucess_count,
              'result': self.verffailed_count})
         df.rename(columns={'lend_request_id': 'verf_times', 'INDUSTRYNAME': 'verf_institution_sum',
                            'RESULT': 'verf_is_success', 'result': 'verf_is_failed'}, inplace=True)
@@ -257,7 +257,8 @@ class Fp_ccx_dataprocess(object):
             columns={'lend_request_id': 'consumerfin_verf_times', 'RESULT': 'consumerfin_verf_sucess'}, inplace=True)
         other_institution = pd.DataFrame(
             data.query("INDUSTRYNAME != '消费金融机构' & INDUSTRYNAME != '银行'").groupby('lend_request_id')[
-                'lend_request_id', 'RESULT'].agg({'lend_request_id': 'count', 'RESULT': self.sucess_count}))
+                'lend_request_id', 'RESULT'].agg(
+                {'RESULT': 'count', 'RESULT': self.sucess_count}))  # lyk wc 1102更新 原因，数错了
         other_institution.rename(
             columns={'lend_request_id': 'oth_institution_verf_times', 'RESULT': 'oth_institution_verf_sucess'},
             inplace=True)
@@ -288,7 +289,7 @@ class Fp_ccx_dataprocess(object):
         data['result'] = data.RESULT_score.map(score_dict)
 
         df = data.groupby('lend_request_id')['lend_request_id', 'RESULT_score', 'INDUSTRYNAME_score'].agg(
-            {'lend_request_id': 'count', 'RESULT_score': is_score, 'INDUSTRYNAME_score': self.count_notnull})
+            {'RESULT_score': 'count', 'RESULT_score': is_score, 'INDUSTRYNAME_score': self.count_notnull})
         df.rename(columns={'lend_request_id': 'score_query_times', 'RESULT_score': 'score_pass',
                            'INDUSTRYNAME_score': 'score_institution_sum'}, inplace=True)
         df1 = df.reset_index()

@@ -41,8 +41,8 @@ def ccxfpABSModelApi():
         pre_score = score(pvalue).tolist()[0]
         # 5. 返回结果
         curDate = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-        res = {'code': 200, 'code_message': "计算成功", 'pvalue': pvalue.tolist()[0], 'Ccx_score': pre_score,
-               "reqTime": curDate, "reqID": reqID
+        res = {'code': '200', 'code_message': "计算成功", 'pvalue': str(pvalue.tolist()[0]), 'Ccx_score': str(pre_score),
+               "reqTime": curDate, "reqID": str(reqID)
                }
         print('计算用时:', time.time() - st)
         # 起一个异步线程去存储数据
@@ -51,7 +51,7 @@ def ccxfpABSModelApi():
             t.start()
         return json.dumps(res, ensure_ascii=False)
     except Exception as e:
-        return jsonify({"code": 502, "msg": "计算失败", "error_msg": str(e), "reqID": reqID})
+        return jsonify({"code": "502", "msg": "计算失败", "error_msg": str(e), "reqID": str(reqID)})
 
 
 @ABS_log('FPABS')
