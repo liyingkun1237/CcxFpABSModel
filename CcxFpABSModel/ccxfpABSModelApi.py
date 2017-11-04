@@ -35,7 +35,7 @@ def ccxfpABSModelApi():
         # 4.预测评分
         VAR.index = VAR.lend_request_id
         # VAR.drop(['lend_request_id'], inplace=True)
-        model_path = get_model_path('model_Fp_Ccx_All_2017-09-29.txt')
+        model_path = get_model_path('model_Fp_Ccx_All_2017-11-04.txt')
         bst = load_model(model_path)
         pvalue = predict_score(model_data(VAR[bst.feature_names]), bst)
         pre_score = score(pvalue).tolist()[0]
@@ -61,7 +61,7 @@ def f_ccxDataTransform(data_dict):
     data_dict = dict(data_dict)
     for k in data_dict.keys():
         try:
-            new_data_dict[k] = pd.DataFrame(data_dict[k]).fillna(np.nan)  # 将None替换为Nan
+            new_data_dict[k] = pd.DataFrame(data_dict[k]).fillna(np.nan).replace("null", np.nan)  # 将None替换为Nan
         except:
             new_data_dict[k] = pd.DataFrame()
             # 写日志了

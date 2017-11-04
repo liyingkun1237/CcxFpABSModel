@@ -174,7 +174,7 @@ class Fp_ccx_dataprocess(object):
     def education_data(data):
         from datetime import datetime
         now = datetime.now().year
-        data['interval_date_guaduation'] = now - data['毕业时间']
+        data['interval_date_guaduation'] = now - data['毕业时间'].apply(lambda x: float(x)) #对付毕业时间"2017"的形式
         data.rename(columns={'学历': 'educational', '学历类型': 'education_type',
                              '毕业结论': 'guaduation_status'}, inplace=True)
         return data[

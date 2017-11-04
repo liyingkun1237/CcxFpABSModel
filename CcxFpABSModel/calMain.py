@@ -48,7 +48,7 @@ def f_calMain(fp_data, ccx_Rawdata):
     var_list = [ccx_data.education_data(ccx_Rawdata['education']),
                 ccx_data.senior_data(ccx_Rawdata['gaoguan']),
                 ccx_data.shareholder_data(ccx_Rawdata['gudong']),
-                ccx_data.lose_promise_data(ccx_Rawdata['shixing']), \
+                ccx_data.lose_promise_data(ccx_Rawdata['shixin']), \
                 ccx_data.execute_vague_data(ccx_Rawdata['zhixing_vague']),
                 ccx_data.execute_exact_data(ccx_Rawdata['zhixing_exact']),
                 ccx_data.overdue_cuiqian_data(ccx_Rawdata['overdue_cuiqian']), \
