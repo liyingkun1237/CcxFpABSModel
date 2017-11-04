@@ -13,14 +13,14 @@ class base_addr(object):
     def __init__(self, base):
         # idno_path = r'C:\Users\liyin\Desktop\FP_ABS\idno_dict.pkl'
         # mobile_path = r'C:\Users\liyin\Desktop\FP_ABS\mobile_addr_dict.pkl'
-        bank_path = r'C:\Users\liyin\Desktop\CcxFpABSModel\CcxFpABSModel\exData\bankAddr_dict_All.pkl'
+        # bank_path = r'C:\Users\liyin\Desktop\CcxFpABSModel\CcxFpABSModel\exData\bankAddr_dict_All.pkl'
         # # bank_path = r'C:\Users\liyin\Desktop\FP_ABS\bank_addr_dict_3rd.pkl'  # 0926更新
         # varall_path = r'C:\Users\liyin\Desktop\FP_ABS\varall.pkl'
         file_path = os.path.split(os.path.realpath(__file__))[0]
 
         idno_path = os.path.join(file_path, 'exData', 'idno_dict.pkl')
         mobile_path = os.path.join(file_path, 'exData', 'mobile_addr_dict.pkl')
-        # bank_path = os.path.join(file_path, 'exData', 'bankAddr_dict_One.pkl')
+        bank_path = os.path.join(file_path, 'exData', 'bankAddr_dict_One.pkl')
         varall_path = os.path.join(file_path, 'exData', 'varall.pkl')
 
         with open(idno_path, 'rb') as f:
