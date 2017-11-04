@@ -44,6 +44,7 @@ def ccxfpABSModelApi():
         res = {'code': '200', 'code_message': "计算成功", 'pvalue': str(pvalue.tolist()[0]), 'Ccx_score': str(pre_score),
                "reqTime": curDate, "reqID": str(reqID)
                }
+        # print(request.data.decode())
         print('计算用时:', time.time() - st)
         # 起一个异步线程去存储数据
         with server.app_context():

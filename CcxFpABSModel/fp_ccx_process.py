@@ -231,10 +231,10 @@ class Fp_ccx_dataprocess(object):
         def merge_reduce(x, y):
             return pd.merge(x, y, left_index=True, right_index=True, how='left')
 
-        df = data.groupby(['lend_request_id'])['lend_request_id', 'INDUSTRYNAME', 'RESULT', 'result'].agg(
-            {'RESULT': 'count', 'INDUSTRYNAME': self.count_notnull, 'RESULT': self.sucess_count,
+        df = data.groupby(['lend_request_id'])['type', 'INDUSTRYNAME', 'RESULT', 'result'].agg(
+            {'type': 'count', 'INDUSTRYNAME': self.count_notnull, 'RESULT': self.sucess_count,
              'result': self.verffailed_count})
-        df.rename(columns={'lend_request_id': 'verf_times', 'INDUSTRYNAME': 'verf_institution_sum',
+        df.rename(columns={'type': 'verf_times', 'INDUSTRYNAME': 'verf_institution_sum',
                            'RESULT': 'verf_is_success', 'result': 'verf_is_failed'}, inplace=True)
         card_verf = pd.DataFrame(
             data.query("joggle == '卡三四要素核验'").groupby('lend_request_id')['RESULT'].agg(self.sucess_count))
@@ -246,21 +246,21 @@ class Fp_ccx_dataprocess(object):
             data.query("joggle == '身份核验'").groupby('lend_request_id')['RESULT'].agg(self.sucess_count))
         uid_verf.rename(columns={'RESULT': 'cid_is_success'}, inplace=True)
         bank = pd.DataFrame(
-            data.query("INDUSTRYNAME == '银行'").groupby('lend_request_id')['lend_request_id', 'RESULT'].agg(
-                {'lend_request_id': 'count', 'RESULT': self.sucess_count}))
+            data.query("INDUSTRYNAME == '银行'").groupby('lend_request_id')['type', 'RESULT'].agg(
+                {'type': 'count', 'RESULT': self.sucess_count}))
 
-        bank.rename(columns={'lend_request_id': 'bank_verf_times', 'RESULT': 'bank_verf_sucess'}, inplace=True)
+        bank.rename(columns={'type': 'bank_verf_times', 'RESULT': 'bank_verf_sucess'}, inplace=True)
         consumer_finance = pd.DataFrame(
-            data.query("INDUSTRYNAME == '消费金融机构'").groupby('lend_request_id')['lend_request_id', 'RESULT'].agg(
-                {'lend_request_id': 'count', 'RESULT': self.sucess_count}))
+            data.query("INDUSTRYNAME == '消费金融机构'").groupby('lend_request_id')['type', 'RESULT'].agg(
+                {'type': 'count', 'RESULT': self.sucess_count}))
         consumer_finance.rename(
-            columns={'lend_request_id': 'consumerfin_verf_times', 'RESULT': 'consumerfin_verf_sucess'}, inplace=True)
+            columns={'type': 'consumerfin_verf_times', 'RESULT': 'consumerfin_verf_sucess'}, inplace=True)
         other_institution = pd.DataFrame(
             data.query("INDUSTRYNAME != '消费金融机构' & INDUSTRYNAME != '银行'").groupby('lend_request_id')[
-                'lend_request_id', 'RESULT'].agg(
-                {'RESULT': 'count', 'RESULT': self.sucess_count}))  # lyk wc 1102更新 原因，数错了
+                'type', 'RESULT'].agg(
+                {'type': 'count', 'RESULT': self.sucess_count}))  # lyk wc 1102更新 原因，数错了
         other_institution.rename(
-            columns={'lend_request_id': 'oth_institution_verf_times', 'RESULT': 'oth_institution_verf_sucess'},
+            columns={'type': 'oth_institution_verf_times', 'RESULT': 'oth_institution_verf_sucess'},
             inplace=True)
         var_list = [df, card_verf, carr_operator, uid_verf, bank, consumer_finance, other_institution]
         var = reduce(merge_reduce, var_list)
@@ -288,9 +288,9 @@ class Fp_ccx_dataprocess(object):
         score_dict = {2002: '信息不足，不予评分', 0: '处理成功', 1013: '验签失败', 1002: '账户余额不足'}
         data['result'] = data.RESULT_score.map(score_dict)
 
-        df = data.groupby('lend_request_id')['lend_request_id', 'RESULT_score', 'INDUSTRYNAME_score'].agg(
-            {'RESULT_score': 'count', 'RESULT_score': is_score, 'INDUSTRYNAME_score': self.count_notnull})
-        df.rename(columns={'lend_request_id': 'score_query_times', 'RESULT_score': 'score_pass',
+        df = data.groupby('lend_request_id')['type_score', 'RESULT_score', 'INDUSTRYNAME_score'].agg(
+            {'type_score': 'count', 'RESULT_score': is_score, 'INDUSTRYNAME_score': self.count_notnull})
+        df.rename(columns={'type_score': 'score_query_times', 'RESULT_score': 'score_pass',
                            'INDUSTRYNAME_score': 'score_institution_sum'}, inplace=True)
         df1 = df.reset_index()
         return df1

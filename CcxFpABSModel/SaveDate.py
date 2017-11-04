@@ -13,7 +13,7 @@ from CcxFpABSModel.config import FPABSDATABASEPATH, FPABSDATABASE
 import pandas as pd
 import os
 import sqlite3
-
+from datetime import datetime
 from CcxFpABSModel.log import ABS_log
 
 
@@ -25,7 +25,9 @@ def f_SaveDate(rawdata, tablename):
     :param filename: sqlite中，数据库中的表名
     :return:
     '''
-
+    # 增加入库时间字段
+    curDate = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+    rawdata['runtime'] = curDate
     if os.path.exists(FPABSDATABASEPATH):  # 如果存放数据库的路径不存在 则创建
         with sqlite3.connect(FPABSDATABASE) as conn:
             rawdata.to_sql(tablename, conn, index=False, if_exists='append')
