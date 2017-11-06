@@ -99,6 +99,7 @@ class Fp_ccx_dataprocess(object):
     # 失信信息
     @staticmethod
     def lose_promise_data(data):
+        data = data.copy()  # 1105增加的，不加无法正常运行第二次
         data['立案时间失信'] = data['立案时间失信'].replace(
             ['40907', '41623', '41391', '41275', '41302', '41453', '41456', '41040', '41142'], '2015年11月11日')
         data['立案时间失信'] = data['立案时间失信'].apply(Fp_ccx_dataprocess().f_transdate)
@@ -123,6 +124,7 @@ class Fp_ccx_dataprocess(object):
     # 执行信息（精确匹配）
     @staticmethod
     def execute_exact_data(data):
+        data = data.copy()  # 1105 修改 修改原因，不能正常运行第二次
         data.drop_duplicates(inplace=True)
         data.PassMth = pd.to_datetime(data.PassMth)
         data['立案时间精确'] = data['立案时间精确'].apply(Fp_ccx_dataprocess().f_transdate)
@@ -174,7 +176,7 @@ class Fp_ccx_dataprocess(object):
     def education_data(data):
         from datetime import datetime
         now = datetime.now().year
-        data['interval_date_guaduation'] = now - data['毕业时间'].apply(lambda x: float(x)) #对付毕业时间"2017"的形式
+        data['interval_date_guaduation'] = now - data['毕业时间'].apply(lambda x: float(x))  # 对付毕业时间"2017"的形式
         data.rename(columns={'学历': 'educational', '学历类型': 'education_type',
                              '毕业结论': 'guaduation_status'}, inplace=True)
         return data[

@@ -41,9 +41,13 @@ def ccxfpABSModelApi():
         pre_score = score(pvalue).tolist()[0]
         # 5. 返回结果
         curDate = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-        res = {'code': '200', 'code_message': "计算成功", 'pvalue': str(pvalue.tolist()[0]), 'Ccx_score': str(pre_score),
+        res = {'code': '200', 'code_message': "计算成功", 'pvalue': str(pvalue.tolist()[0]), 'Ccx_score': pre_score,
                "reqTime": curDate, "reqID": str(reqID)
                }
+
+        # 6. 修正评分
+        new_pre_score = f_mdscore(res, VAR)
+        res['Ccx_score'] = str(new_pre_score)
         # print(request.data.decode())
         print('计算用时:', time.time() - st)
         # 起一个异步线程去存储数据

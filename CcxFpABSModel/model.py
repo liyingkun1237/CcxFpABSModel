@@ -40,3 +40,24 @@ def predict_score(dtest, bst):
 def score(test_pred):
     score = 600 - 20 / np.log(2) * np.log(test_pred / (1 - test_pred))
     return np.round(score, 0)
+
+@ABS_log('FPABS')
+def f_mdscore(res, VAR):
+    '''
+
+    :param res: 预测出的评分 返回格式为字典
+    :param VAR: 计算出的全部变量
+    :return: 修正后的得分
+    '''
+
+    def rule(presocre, value):
+        ls = []
+        for i, j in zip(presocre, value):
+            if i > 670 and j > 0:  # 满足入池条件且有风险
+                ls.append(i - (i - 670) * j * 1.5)
+            else:
+                ls.append(i)
+        return ls
+
+    value = list(VAR.shixing_times.fillna(0) + VAR.zhixing_exact_times.fillna(0))
+    return rule([res['Ccx_score']], value)[0]
