@@ -6,6 +6,7 @@ FpABS_RAWData
 FPALLVar
 FPResult
 
+FPScorestep
 三方数据表名较多
 """
 
@@ -52,7 +53,7 @@ def f_threadSaveData(fp_data, ccx_Rawdata):
         # print('#' * 32, k, ccx_Rawdata[k], )
         f_SaveDate(ccx_Rawdata[k], k)
 
-    print('所有数据保存成功')
+    # print('所有数据保存成功')
 
 
 def f_threadSaveVar(var):
@@ -62,7 +63,7 @@ def f_threadSaveVar(var):
     :return:
     '''
     f_SaveDate(var, 'FPALLVar')
-    print('变量保存成功')
+    # print('变量保存成功')
 
 
 def f_threadSaveResult(res):
@@ -72,7 +73,17 @@ def f_threadSaveResult(res):
     :return:
     '''
     f_SaveDate(pd.DataFrame(res, index=[0]), 'FPResult')
-    print('结果保存成功')
+    # print('结果保存成功')
+
+
+def f_threadSaveScore(res):
+    '''
+    保存各个阶段的评分结果
+    :param res:
+    :return:
+    '''
+    f_SaveDate(pd.DataFrame(res, index=[0]), 'FPScorestep')
+
 
 
 @ABS_log('FPABS')

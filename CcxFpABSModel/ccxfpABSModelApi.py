@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime
 from flask import jsonify
 
-from CcxFpABSModel.SaveDate import f_threadSave
+from CcxFpABSModel.SaveDate import f_threadSave, f_threadSaveScore
 from CcxFpABSModel.calMain import f_calMain
 from CcxFpABSModel.model import *
 from CcxFpABSModel.updateBankDict import f_updateBankDict
@@ -35,7 +35,7 @@ def ccxfpABSModelApi():
         # 4.预测评分
         VAR.index = VAR.lend_request_id
         # VAR.drop(['lend_request_id'], inplace=True)
-        model_path = get_model_path('model_Fp_Ccx_All_2017-11-04.txt')
+        model_path = get_model_path('model_Fp_Ccx_All_2017-11-05.txt')
         bst = load_model(model_path)
         pvalue = predict_score(model_data(VAR[bst.feature_names]), bst)
         pre_score = score(pvalue).tolist()[0]
@@ -45,18 +45,34 @@ def ccxfpABSModelApi():
                "reqTime": curDate, "reqID": str(reqID)
                }
 
-        # 6. 修正评分
+        # 6. 修正评分 使用shixing_times zhixing_exact_times
         new_pre_score = f_mdscore(res, VAR)
-        res['Ccx_score'] = str(new_pre_score)
+
+        # 7. 修正评分 使用风险分
+        new_score = f_mdscorebyRisk(new_pre_score, ccx_Rawdata)
+
+        res['Ccx_score'] = str(new_score)
         # print(request.data.decode())
-        print('计算用时:', time.time() - st)
+        # print('计算用时:', time.time() - st)
+        res_score = {'reqID': str(reqID), 'preScore': pre_score, 'mdScore': new_pre_score,
+                     'mdScorebyRisk': new_score}
+        # f_threadSaveScore(res_score)
+        print('INFO -->> %s' % res_score)
+
+        # 起一个异步线程去存储评分结果
+        with server.app_context():
+            t = threading.Thread(target=f_threadSaveScore, args=(res_score,))
+            t.start()
+
         # 起一个异步线程去存储数据
         with server.app_context():
             t = threading.Thread(target=f_threadSave, args=(fp_data, ccx_Rawdata, VAR, res))
             t.start()
         return json.dumps(res, ensure_ascii=False)
     except Exception as e:
-        return jsonify({"code": "502", "msg": "计算失败", "error_msg": str(e), "reqID": str(reqID)})
+        res = {"code": "502", "msg": "计算失败", "error_msg": str(e), "reqID": str(reqID)}
+        print('ERROR -->> %s' % res)
+        return jsonify(res)
 
 
 @ABS_log('FPABS')

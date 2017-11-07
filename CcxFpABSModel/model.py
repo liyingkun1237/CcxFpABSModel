@@ -41,7 +41,8 @@ def score(test_pred):
     score = 600 - 20 / np.log(2) * np.log(test_pred / (1 - test_pred))
     return np.round(score, 0)
 
-@ABS_log('FPABS')
+
+# @ABS_log('FPABS')
 def f_mdscore(res, VAR):
     '''
 
@@ -61,3 +62,17 @@ def f_mdscore(res, VAR):
 
     value = list(VAR.shixing_times.fillna(0) + VAR.zhixing_exact_times.fillna(0))
     return rule([res['Ccx_score']], value)[0]
+
+
+# @ABS_log('FPABS')
+def f_mdscorebyRisk(new_pre_score, ccx_Rawdata):
+    riskscore = ccx_Rawdata['riskScore']['riskScore'].values[0]
+    newsocre = new_pre_score - riskscore  # 经过修正的模型分 减去风险分
+    if new_pre_score > 670 and newsocre > 670 and riskscore > 30:  # 即修正前 修正后 且有风险
+        '''
+        riskscore > 30 特别注意这个条件 没有数据核验过 该减多少
+        减30的原因，线下最高评分也就700分，修正后，还超过670，说明了风险分超了30，且最初评分很高
+        '''
+        return newsocre - (newsocre - 670) * 2
+    else:
+        return newsocre
