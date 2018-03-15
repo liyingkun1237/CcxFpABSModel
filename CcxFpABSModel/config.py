@@ -6,7 +6,8 @@
 import os
 
 # ProjectPATH = os.path.dirname(os.path.split(os.path.realpath(__file__))[0])
-ProjectPATH = r'C:\Users\liyin\Desktop\CcxFpABSModel'
+# ProjectPATH = r'C:\Users\liyin\Desktop\CcxFpABSModel'
+ProjectPATH = r'/CcxFpABSModel'
 LOGFILEPATH = os.path.join(ProjectPATH, 'Log')
 # 默认 为项目路径下
 # 下一版优化到日志显示层级 联调时为详细版 上线后为简版

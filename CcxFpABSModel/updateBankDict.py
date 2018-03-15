@@ -9,6 +9,7 @@ import os
 import pickle
 from CcxFpABSModel.log import ABS_log
 
+
 @ABS_log('FPABS')
 def f_updateBankDict(bank):
     '''
@@ -25,10 +26,10 @@ def f_updateBankDict(bank):
     with open(bank_path, 'wb') as f:
         pickle.dump(bank, f)
 
-    # with open(bank_path, 'rb') as f:
-    #     bankcard_dict = pickle.load(f)
+        # with open(bank_path, 'rb') as f:
+        #     bankcard_dict = pickle.load(f)
 
-    # print('bankData update')
+        # print('bankData update')
 
 
 if __name__ == '__main__':
@@ -72,3 +73,30 @@ if __name__ == '__main__':
 
     with open(bank_path, 'rb') as f:
         bankcard_dict = pickle.load(f)
+
+    ##############################1112 重新计算更新后的银行卡
+
+    bank_4 = pd.read_excel(r'C:\Users\liyin\Desktop\CcxFpABSModel\1101AddData\FP第四批-银行卡号查询数据.xlsx')
+    bank_4 = bank_4.drop_duplicates('CARD_NO_PRI')
+    # bank_4.columns
+
+    #
+    # bankcard_dict.columns
+    bank_4 = bank_4.rename(columns={'LEND_REQUEST_ID': 'lend_request_id',
+                                    'PASSMTH': 'PassMth',
+                                    'CARD_NO_PRI': 'card_no_pri',
+                                    'BANK': 'bank', 'CARDKIND': 'cardkind',
+                                    'CARDTYPE': 'cardtype',
+                                    'BANK_PROV': 'bank_prov',
+                                    'BANK_CITY': 'bank_city'})
+
+    bank_path = r'C:\Users\liyin\Desktop\CcxFpABSModel\bank\bankAddr_dict_4.pkl'
+
+    with open(bank_path, 'wb') as f:
+        pickle.dump(bank_4, f)
+
+    with open(bank_path, 'rb') as f:
+        bankcard_dict = pickle.load(f)
+
+    # bankcard_dict.dtypes
+    # bank_4.dtypes

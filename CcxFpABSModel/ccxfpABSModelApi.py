@@ -1,3 +1,5 @@
+import multiprocessing
+
 import flask
 from flask import request
 import json
@@ -61,12 +63,12 @@ def ccxfpABSModelApi():
 
         # 起一个异步线程去存储评分结果
         with server.app_context():
-            t = threading.Thread(target=f_threadSaveScore, args=(res_score,))
+            t = multiprocessing.Process(target=f_threadSaveScore, args=(res_score,))
             t.start()
 
         # 起一个异步线程去存储数据
         with server.app_context():
-            t = threading.Thread(target=f_threadSave, args=(fp_data, ccx_Rawdata, VAR, res))
+            t = multiprocessing.Process(target=f_threadSave, args=(fp_data, ccx_Rawdata, VAR, res))
             t.start()
         return json.dumps(res, ensure_ascii=False)
     except Exception as e:
@@ -89,4 +91,4 @@ def f_ccxDataTransform(data_dict):
 
 
 if __name__ == '__main__':
-    server.run(debug=True, port=5051, host='0.0.0.0')
+    server.run(debug=True, port=5051, host='0.0.0.0', processes=100)

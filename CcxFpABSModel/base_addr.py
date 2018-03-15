@@ -14,6 +14,7 @@ class base_addr(object):
         # idno_path = r'C:\Users\liyin\Desktop\FP_ABS\idno_dict.pkl'
         # mobile_path = r'C:\Users\liyin\Desktop\FP_ABS\mobile_addr_dict.pkl'
         # bank_path = r'C:\Users\liyin\Desktop\CcxFpABSModel\CcxFpABSModel\exData\bankAddr_dict_All.pkl'
+        # bank_path = r'C:\Users\liyin\Desktop\CcxFpABSModel\CcxFpABSModel\exData\bankAddr_dict_4.pkl'
         # # bank_path = r'C:\Users\liyin\Desktop\FP_ABS\bank_addr_dict_3rd.pkl'  # 0926更新
         # varall_path = r'C:\Users\liyin\Desktop\FP_ABS\varall.pkl'
         file_path = os.path.split(os.path.realpath(__file__))[0]

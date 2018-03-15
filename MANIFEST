@@ -13,6 +13,7 @@ CcxFpABSModel\fp_ccx_process.py
 CcxFpABSModel\log.py
 CcxFpABSModel\model.py
 CcxFpABSModel\updateBankDict.py
+CcxFpABSModel\exData\bankAddr_dict_4.pkl
 CcxFpABSModel\exData\bankAddr_dict_All.pkl
 CcxFpABSModel\exData\bankAddr_dict_One.pkl
 CcxFpABSModel\exData\bank_addr_dict_all.pkl
@@ -23,4 +24,5 @@ CcxFpABSModel\exData\idno_dict.pkl
 CcxFpABSModel\exData\mobile_addr_dict.pkl
 CcxFpABSModel\exData\model_Fp_Ccx_All_2017-09-29.txt
 CcxFpABSModel\exData\model_Fp_Ccx_All_2017-11-04.txt
+CcxFpABSModel\exData\model_Fp_Ccx_All_2017-11-05.txt
 CcxFpABSModel\exData\varall.pkl
